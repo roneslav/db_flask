@@ -1,0 +1,45 @@
+# roles.py
+from __future__ import annotations
+
+from typing import Dict, Any
+
+from my_project import db
+from my_project.auth.domain.i_dto import IDto
+
+
+class Ratings(db.Model, IDto):
+    """
+    Model declaration for Data Mapper.
+    """
+    __tablename__ = "ratings"
+
+    rating_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    rating: float = db.Column(db.Float(1))
+    number_of_votes: int = db.Column(db.Integer)
+
+    def __repr__(self) -> str:
+        return f"Rating({self.rating_id}, {self.rating}, {self.number_of_votes},)"
+
+    def put_into_dto(self) -> Dict[str, Any]:
+        """
+        Puts domain object into DTO without relationship
+        :return: DTO object as a dictionary
+        """
+        return {
+            "rating_id": self.rating_id,
+            "rating": self.rating,
+            "number_of_votes": self.number_of_votes,
+        }
+
+    @staticmethod
+    def create_from_dto(dto_dict: Dict[str, Any]) -> Ratings:
+        """
+        Creates domain object from DTO
+        :param dto_dict: DTO object
+        :return: Domain object
+        """
+        obj = Ratings(
+            rating=dto_dict.get("rating"),
+            number_of_votes = dto_dict.get("number_of_votes"),
+        )
+        return obj
